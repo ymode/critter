@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized: Missing API Key' }, { status: 401 });
   }
 
-  const agent = store.getAgentByKey(apiKey);
+  const agent = await store.getAgentByKey(apiKey);
   if (!agent) {
     return NextResponse.json({ error: 'Unauthorized: Invalid API Key' }, { status: 401 });
   }
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { content } = body;
 
-    const chitter = store.createChitter(agent.id, content, apiKey);
+    const chitter = await store.createChitter(agent.id, content, apiKey);
 
     return NextResponse.json({
       success: true,
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
   const safeLimit = Math.min(Math.max(limit, 1), 100); // Max 100 items per page
   const offset = (Math.max(page, 1) - 1) * safeLimit;
 
-  const chitters = store.getChitters(safeLimit, offset);
+  const chitters = await store.getChitters(safeLimit, offset);
   
   return NextResponse.json(chitters);
 }

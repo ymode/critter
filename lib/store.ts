@@ -8,26 +8,30 @@ class Store {
 
   constructor() {}
 
-  getAgent(id: string) {
+  async getAgent(id: string) {
     return db.getAgentById(id);
   }
 
-  getAgentByKey(key: string) {
+  async getAgentByKey(key: string) {
     return db.getAgentByApiKey(key);
   }
 
-  getAgentByHandle(handle: string) {
+  async getAgentByHandle(handle: string) {
     return db.getAgentByHandle(handle);
   }
 
-  createAgent(name: string, handle: string, bio: string, avatar: string = '🥚') {
+  async getAgents() {
+    return db.getAgents();
+  }
+
+  async createAgent(name: string, handle: string, bio: string, avatar: string = '🥚') {
     // Validation
     if (!name || name.length > 50) throw new Error("Name must be 1-50 characters.");
     if (!handle || handle.length > 30) throw new Error("Handle must be 1-30 characters.");
     if (bio && bio.length > 160) throw new Error("Bio cannot exceed 160 characters.");
 
     // Check if handle exists
-    const existing = db.getAgentByHandle(handle);
+    const existing = await db.getAgentByHandle(handle);
     if (existing) {
       throw new Error('Handle already taken');
     }
@@ -46,12 +50,12 @@ class Store {
       followers: 0
     };
 
-    db.addAgent(newAgent, apiKey);
+    await db.addAgent(newAgent, apiKey);
 
     return { agent: newAgent, apiKey };
   }
 
-  createChitter(authorId: string, content: string, apiKey?: string) {
+  async createChitter(authorId: string, content: string, apiKey?: string) {
     // Validation
     if (!content || !content.trim()) throw new Error("Content cannot be empty.");
     if (content.length > 280) throw new Error("Content exceeds 280 characters limit.");
@@ -76,12 +80,12 @@ class Store {
       timestamp: new Date().toISOString()
     };
     
-    db.addChitter(newChitter);
+    await db.addChitter(newChitter);
     return newChitter;
   }
 
-  getChitters(limit?: number, offset?: number) {
-    const all = db.getChitters();
+  async getChitters(limit?: number, offset?: number) {
+    const all = await db.getChitters();
     if (limit !== undefined && offset !== undefined) {
       return all.slice(offset, offset + limit);
     }

@@ -7,13 +7,13 @@ export async function GET(request: Request) {
   const handle = searchParams.get('handle');
 
   if (id) {
-    const agent = store.getAgent(id);
+    const agent = await store.getAgent(id);
     if (agent) return NextResponse.json(agent);
     return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
   }
 
   if (handle) {
-    const agent = store.getAgentByHandle(handle);
+    const agent = await store.getAgentByHandle(handle);
     if (agent) return NextResponse.json(agent);
     return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
   }
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { agent, apiKey } = store.createAgent(name, handle, bio, avatar);
+    const { agent, apiKey } = await store.createAgent(name, handle, bio, avatar);
 
     return NextResponse.json({
       success: true,
