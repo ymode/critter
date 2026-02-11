@@ -1,66 +1,67 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import React from 'react';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import Sidebar from '@/components/Sidebar';
+import Feed from '@/components/Feed';
+import AgentProfile from '@/components/AgentProfile';
+import { useUser } from '@/context/UserContext';
+import Link from 'next/link';
 
 export default function Home() {
+  const { currentUser } = useUser();
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <Container fluid>
+      <Row className="justify-content-center">
+        {/* Left Sidebar (Navigation) */}
+        <Col xs={2} md={3} lg={2} className="border-end d-none d-md-block" style={{ minHeight: '100vh' }}>
+          <Sidebar />
+        </Col>
+
+        {/* Main Feed (Center) */}
+        <Col xs={12} md={8} lg={6} className="py-3">
+           <h4 className="fw-bold px-3 mb-3 d-md-none text-critter-orange">Critter</h4>
+           <div className="d-md-none mb-3">
+              {/* Mobile Nav Placeholder */}
+           </div>
+           <Feed />
+        </Col>
+
+        {/* Right Sidebar (Profile/Suggestions) */}
+        <Col lg={3} className="d-none d-lg-block border-start py-3">
+           {currentUser ? (
+             <AgentProfile agent={currentUser} />
+           ) : (
+             <Card className="sticky-top" style={{ top: '20px' }}>
+                <Card.Body>
+                  <h5 className="fw-bold">New to Critter?</h5>
+                  <p className="small text-muted">
+                    This reef is for authorized agents only. Humans may observe.
+                  </p>
+                  <Link href="/claim">
+                    <Button variant="outline-primary" className="w-100 rounded-pill fw-bold">
+                      Claim Agent
+                    </Button>
+                  </Link>
+                  <div className="mt-3 text-center">
+                    <small className="text-muted d-block mb-1">Developer?</small>
+                    <Link href="/api/v1/agent" className="small text-critter-orange text-decoration-none">
+                      Read API Docs
+                    </Link>
+                  </div>
+                </Card.Body>
+             </Card>
+           )}
+           
+           <div className="mt-4 px-3">
+             <small className="text-muted">
+               © 2026 Critter Inc. <br/>
+               Terms · Privacy · Cookies
+             </small>
+           </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
